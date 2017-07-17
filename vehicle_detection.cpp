@@ -1,5 +1,7 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
+#include <time.h>
+using namespace cv;
 
 const int KEY_SPACE = 32;
 const int KEY_ESC = 27;
@@ -57,7 +59,7 @@ int main(int argc, char** argv)
     if(key == KEY_SPACE)
       key = cvWaitKey(0);
 
-    if(key == KEY_ESC)
+    if((char)key == KEY_ESC)
       break;
 
   }while(1);
@@ -69,6 +71,12 @@ int main(int argc, char** argv)
   cvReleaseMemStorage(&storage);
 
   return 0;
+}
+template<typename T>
+std::string numberToString(T Number) {
+    std::ostringstream ss;
+    ss << Number;
+    return ss.str();
 }
 
 void detect(IplImage *img)
@@ -84,16 +92,32 @@ void detect(IplImage *img)
     cvSize(0,0),//cvSize( 30,30), // ------MINSIZE
     img_size //cvSize(70,70)//cvSize(640,480)  //---------MAXSIZE
     );
-
-  std::cout << "Total: " << object->total << " cars detected." << std::endl;
+int totalCar = 0;
   for(int i = 0 ; i < ( object ? object->total : 0 ) ; i++)
   {
     CvRect *r = (CvRect*)cvGetSeqElem(object, i);
-    cvRectangle(img,
-      cvPoint(r->x, r->y),
-      cvPoint(r->x + r->width, r->y + r->height),
-      CV_RGB(255, 0, 0), 2, 8, 0);
-  }
+    if(r->width > 70){
+        cvSetImageROI(img, *r);
 
-  cvShowImage("video", img);
+        IplImage *tmp = cvCreateImage(cvGetSize(img),
+                                      img->depth,
+                                      img->nChannels);
+
+        cvCopy(img, tmp, NULL);
+        cvResetImageROI(img);
+        time_t t = time(0);   // get time now
+        struct tm * now = localtime( & t );
+        cvSaveImage(("/home/hieunv/Desktop/Cars/IMG_" + numberToString(now->tm_hour)
+                     +"_"+ numberToString(now->tm_min) +"_"+ numberToString(now->tm_sec)+".JPG").c_str(),tmp);
+//        cvRectangle(img,
+//                    cvPoint(r->x, r->y),
+//                    cvPoint(r->x + r->width, r->y + r->height),
+//                    CV_RGB(255, 0, 0), 2, 8, 0);
+    totalCar++;
+    }
+  }
+  std::cout << "Total: " << totalCar << " cars detected." << std::endl;
+//  cvShowImage("video", img);
+
+
 }

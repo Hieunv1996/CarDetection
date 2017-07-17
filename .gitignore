@@ -7,3 +7,7 @@ tmp/
 *.pdb
 *.opensdf
 *.opendb
+.idea/modules.xml
+.idea/vehicle_detection_haarcascades.iml
+.idea/workspace.xml
+cmake-build-debug/
