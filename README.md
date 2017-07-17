@@ -1,5 +1,5 @@
 # Vehicle Detection with Haar Cascades
-## Copy from https://github.com/mrnugget/opencv-haar-classifier-training
+## Copy from https://github.com/andrewssobral/vehicle_detection_haarcascades
 Last page update: **19/10/2016**
 
 Last version: **1.0.0** (see Release Notes for more info)
